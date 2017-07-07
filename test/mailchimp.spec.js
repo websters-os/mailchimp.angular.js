@@ -74,7 +74,7 @@ describe('mailChimpSubscriber component', function () {
             $ctrl.data = {
                 custom: 'field'
             };
-            endpoint = 'http://username.dc.list-manage.com/subscribe/post-json?c=JSON_CALLBACK&custom=field&id=id&u=u';
+            endpoint = '//username.dc.list-manage.com/subscribe/post-json?c=JSON_CALLBACK&custom=field&id=id&u=u';
         });
 
         describe('on success', function () {
