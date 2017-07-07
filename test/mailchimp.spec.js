@@ -6,7 +6,7 @@ describe('mailChimpSubscriber component', function () {
     beforeEach(inject(function ($componentController, _$httpBackend_) {
         $httpBackend = _$httpBackend_;
         scope = {
-            mailChimpSubscriberForm: {
+            mailchimpSubscriberForm: {
                 invalid: {
                     $invalid: true
                 },
@@ -23,7 +23,7 @@ describe('mailChimpSubscriber component', function () {
             templateUrl: 'template'
         };
 
-        $ctrl = $componentController('mailChimpSubscriber', {$scope: scope}, bindings);
+        $ctrl = $componentController('mailchimpSubscriber', {$scope: scope}, bindings);
         $ctrl.$onInit();
     }));
 
@@ -62,7 +62,7 @@ describe('mailChimpSubscriber component', function () {
         var endpoint;
 
         beforeEach(function () {
-            scope.mailChimpSubscriberForm.$valid = true;
+            scope.mailchimpSubscriberForm.$valid = true;
             $ctrl.data = {
                 custom: 'field'
             };

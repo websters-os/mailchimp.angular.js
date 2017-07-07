@@ -1,9 +1,9 @@
 (function (angular) {
     angular.module('mailchimp', [])
-        .component('mailChimpSubscriber', new MailChimpSubscriberComponent());
+        .component('mailchimpSubscriber', new MailchimpSubscriberComponent());
 
-    function MailChimpSubscriberComponent() {
-        this.template = '<form name="mailChimpSubscriberForm" ng-submit="$ctrl.submit()" ng-include="::$ctrl.templateUrl"></form>';
+    function MailchimpSubscriberComponent() {
+        this.template = '<form name="mailchimpSubscriberForm" ng-submit="$ctrl.submit()" ng-include="::$ctrl.templateUrl"></form>';
 
         this.bindings = {
             mcUsername: '@',
@@ -18,7 +18,7 @@
 
             $ctrl.$onInit = function () {
                 $ctrl.isInvalid = function (field) {
-                    return submitted && $scope.mailChimpSubscriberForm[field].$invalid;
+                    return submitted && $scope.mailchimpSubscriberForm[field].$invalid;
                 };
 
                 $ctrl.isWorking = function () {
@@ -32,7 +32,7 @@
                     submitted = true;
                     startWorking();
 
-                    if ($scope.mailChimpSubscriberForm.$valid) {
+                    if ($scope.mailchimpSubscriberForm.$valid) {
                         var params = angular.extend($ctrl.data, {
                             u: $ctrl.mcU,
                             id: $ctrl.mcId,
