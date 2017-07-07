@@ -3,7 +3,7 @@
         .component('mailchimpSubscriber', new MailchimpSubscriberComponent());
 
     function MailchimpSubscriberComponent() {
-        this.template = '<form name="mailchimpSubscriberForm" ng-submit="$ctrl.submit()" ng-include="::$ctrl.templateUrl"></form>';
+        this.template = '<form name="mailchimpSubscriberForm" ng-submit="$ctrl.submit()"><div ng-include="::$ctrl.templateUrl"></div></form>';
 
         this.bindings = {
             mcUsername: '@',
@@ -14,11 +14,12 @@
         };
 
         this.controller = ['$http', '$scope', function ($http, $scope) {
-            var $ctrl = this, working, submitted;
+            var $ctrl = this, working, submitted, form;
 
             $ctrl.$onInit = function () {
                 $ctrl.isInvalid = function (field) {
-                    return submitted && $scope.mailchimpSubscriberForm[field].$invalid;
+                    var form = $scope.mailchimpSubscriberForm;
+                    return submitted && form[field] && form[field].$invalid;
                 };
 
                 $ctrl.isWorking = function () {
@@ -65,6 +66,7 @@
 
             function onSubscribed() {
                 $ctrl.subscribed = true;
+                submitted = false;
                 clearForm();
             }
 

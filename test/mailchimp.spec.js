@@ -36,6 +36,10 @@ describe('mailChimpSubscriber component', function () {
         expect($ctrl.isInvalid('invalid')).toBeFalsy();
     });
 
+    it('check for unknown field before submit', function () {
+        expect($ctrl.isInvalid('unknown')).toBeFalsy();
+    });
+
     describe('on submit with invalid form', function () {
         beforeEach(function () {
             $ctrl.submit();
@@ -55,6 +59,10 @@ describe('mailChimpSubscriber component', function () {
 
         it('check for valid field', function () {
             expect($ctrl.isInvalid('valid')).toBeFalsy();
+        });
+
+        it('check for unknown field before submit', function () {
+            expect($ctrl.isInvalid('unknown')).toBeFalsy();
         });
     });
 
@@ -78,6 +86,14 @@ describe('mailChimpSubscriber component', function () {
 
             it('is subscribed', function () {
                 expect($ctrl.subscribed).toBeTruthy();
+            });
+
+            it('form is cleared', function () {
+                expect($ctrl.data).toEqual({});
+            });
+
+            it('check for invalid field', function () {
+                expect($ctrl.isInvalid('invalid')).toBeFalsy();
             });
         });
 
