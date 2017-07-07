@@ -57,11 +57,9 @@
             }
 
             function onSuccess(result) {
-                if(result.data.result === 'success') {
-                    onSubscribed();
-                    $ctrl.subscribedMessage = result.data.msg;
-                }
+                if(result.data.result === 'success') onSubscribed();
                 else onError();
+                $ctrl.message = result.data.msg;
             }
 
             function onSubscribed() {

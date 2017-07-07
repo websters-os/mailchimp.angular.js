@@ -112,7 +112,7 @@ describe('mailChimpSubscriber component', function () {
             });
 
             it('custom message is available', function () {
-                expect($ctrl.subscribedMessage).toEqual('message');
+                expect($ctrl.message).toEqual('message');
             });
         });
 
@@ -129,6 +129,25 @@ describe('mailChimpSubscriber component', function () {
 
             it('violation is available', function () {
                 expect($ctrl.violation).toEqual('subscription.failed');
+            });
+        });
+
+        describe('on failed with custom message', function () {
+            beforeEach(function () {
+                $httpBackend.expectJSONP(endpoint).respond(200, {
+                    result: 'failed',
+                    msg: 'message'
+                });
+                $ctrl.submit();
+                $httpBackend.flush();
+            });
+
+            it('is not subscribed', function () {
+                expect($ctrl.subscribed).toBeFalsy();
+            });
+
+            it('custom message is available', function () {
+                expect($ctrl.message).toEqual('message');
             });
         });
 
