@@ -1,0 +1,17 @@
+{
+  "name": "websters.mailchimp.angular",
+  "main": "./src/mailchimp.js",
+  "dependencies": {
+    "angular": "1.5.*"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.5.*"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
