@@ -53,7 +53,7 @@
             };
 
             function getEndpoint() {
-                return 'http://' + $ctrl.mcUsername + '.' + $ctrl.mcDc + '.list-manage.com/subscribe/post-json';
+                return '//' + $ctrl.mcUsername + '.' + $ctrl.mcDc + '.list-manage.com/subscribe/post-json';
             }
 
             function onSuccess(result) {
