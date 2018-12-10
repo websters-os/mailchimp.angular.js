@@ -18,7 +18,7 @@
             }).then(onSuccess, args.onError);
 
             function onSuccess(result) {
-                args.onSuccess(result.data);
+                if (args.onSuccess) args.onSuccess(result.data);
             }
         };
 

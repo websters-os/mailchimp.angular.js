@@ -67,6 +67,13 @@ describe('mailchimpSubscriber service', function () {
             });
         });
 
+        it('success without success handler', function () {
+            args.onSuccess = undefined;
+            $httpBackend.expectJSONP(endpoint).respond(200);
+            service.subscribe(args);
+            $httpBackend.flush();
+        });
+
         describe('error', function () {
             beforeEach(function () {
                 $httpBackend.expectJSONP(endpoint).respond(400);
@@ -77,6 +84,13 @@ describe('mailchimpSubscriber service', function () {
             it('error handler is executed', function () {
                 expect(onErrorSpy).toHaveBeenCalled();
             });
+        });
+
+        it('error without error handler', function () {
+            args.onError = undefined;
+            $httpBackend.expectJSONP(endpoint).respond(400);
+            service.subscribe(args);
+            $httpBackend.flush();
         });
     });
 });
