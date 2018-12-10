@@ -1,10 +1,90 @@
-beforeEach(module('mailchimp'));
+require('../node_modules/angular/angular.min.js');
+require('../node_modules/angular-mocks/angular-mocks.js');
+require('../src/mailchimp');
 
-describe('mailChimpSubscriber component', function () {
-    var $ctrl, $httpBackend, scope, bindings;
+beforeEach(angular.mock.module('mailchimp'));
 
-    beforeEach(inject(function ($componentController, _$httpBackend_) {
+describe('mailchimpSubscriber service', function () {
+    var service, $httpBackend;
+
+    beforeEach(inject(function (mailchimpSubscriber, _$httpBackend_) {
+        service = mailchimpSubscriber;
         $httpBackend = _$httpBackend_;
+    }));
+
+    afterEach(function () {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    describe('on subscribe', function () {
+        var onSuccessSpy, onErrorSpy, args, endpoint;
+
+        beforeEach(function () {
+            onSuccessSpy = jasmine.createSpy();
+            onErrorSpy = jasmine.createSpy();
+            args = {
+                mcUsername: 'username',
+                mcDc: 'dc',
+                mcU: 'u',
+                mcId: 'id',
+                data: {
+                    custom: 'field'
+                },
+                onSuccess: onSuccessSpy,
+                onError: onErrorSpy
+            };
+            endpoint = '//username.dc.list-manage.com/subscribe/post-json?c=JSON_CALLBACK&custom=field&id=id&u=u';
+        });
+
+        describe('success', function () {
+            beforeEach(function () {
+                $httpBackend.expectJSONP(endpoint).respond(200);
+                service.subscribe(args);
+                $httpBackend.flush();
+            });
+
+            it('success handler is executed', function () {
+                expect(onSuccessSpy).toHaveBeenCalled();
+            });
+        });
+
+        describe('success with custom message', function () {
+            var customMessage;
+
+            beforeEach(function () {
+                customMessage = {
+                    result: 'success',
+                    msg: 'message'
+                };
+                $httpBackend.expectJSONP(endpoint).respond(200, customMessage);
+                service.subscribe(args);
+                $httpBackend.flush();
+            });
+
+            it('success handler is executed', function () {
+                expect(onSuccessSpy.calls.mostRecent().args[0]).toEqual(customMessage);
+            });
+        });
+
+        describe('error', function () {
+            beforeEach(function () {
+                $httpBackend.expectJSONP(endpoint).respond(400);
+                service.subscribe(args);
+                $httpBackend.flush();
+            });
+
+            it('error handler is executed', function () {
+                expect(onErrorSpy).toHaveBeenCalled();
+            });
+        });
+    });
+});
+
+describe('mailchimpSubscriber component', function () {
+    var $ctrl, scope, bindings, subscriber;
+
+    beforeEach(inject(function ($componentController) {
         scope = {
             mailchimpSubscriberForm: {
                 invalid: {
@@ -15,6 +95,8 @@ describe('mailChimpSubscriber component', function () {
                 }
             }
         };
+        subscriber = { subscribe: jasmine.createSpy() };
+
         bindings = {
             mcUsername: 'username',
             mcDc: 'dc',
@@ -23,14 +105,9 @@ describe('mailChimpSubscriber component', function () {
             templateUrl: 'template'
         };
 
-        $ctrl = $componentController('mailchimpSubscriber', {$scope: scope}, bindings);
+        $ctrl = $componentController('mailchimpSubscriber', { $scope: scope, mailchimpSubscriber: subscriber }, bindings);
         $ctrl.$onInit();
     }));
-
-    afterEach(function () {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
-    });
 
     it('check for invalid field before submit', function () {
         expect($ctrl.isInvalid('invalid')).toBeFalsy();
@@ -67,21 +144,18 @@ describe('mailChimpSubscriber component', function () {
     });
 
     describe('on submit with valid form', function () {
-        var endpoint;
-
         beforeEach(function () {
             scope.mailchimpSubscriberForm.$valid = true;
             $ctrl.data = {
                 custom: 'field'
             };
-            endpoint = '//username.dc.list-manage.com/subscribe/post-json?c=JSON_CALLBACK&custom=field&id=id&u=u';
         });
 
         describe('on success', function () {
             beforeEach(function () {
-                $httpBackend.expectJSONP(endpoint).respond(200, {result: 'success'});
+                var result = { result: 'success' };
                 $ctrl.submit();
-                $httpBackend.flush();
+                subscriber.subscribe.calls.mostRecent().args[0].onSuccess(result);
             });
 
             it('is subscribed', function () {
@@ -99,12 +173,12 @@ describe('mailChimpSubscriber component', function () {
 
         describe('on success with custom message', function () {
             beforeEach(function () {
-                $httpBackend.expectJSONP(endpoint).respond(200, {
+                var result = {
                     result: 'success',
                     msg: 'message'
-                });
+                };
                 $ctrl.submit();
-                $httpBackend.flush();
+                subscriber.subscribe.calls.mostRecent().args[0].onSuccess(result);
             });
 
             it('is subscribed', function () {
@@ -118,9 +192,9 @@ describe('mailChimpSubscriber component', function () {
 
         describe('on failed', function () {
             beforeEach(function () {
-                $httpBackend.expectJSONP(endpoint).respond(200, {result: 'failed'});
+                var result = { result: 'failed' };
                 $ctrl.submit();
-                $httpBackend.flush();
+                subscriber.subscribe.calls.mostRecent().args[0].onSuccess(result);
             });
 
             it('is not subscribed', function () {
@@ -134,12 +208,12 @@ describe('mailChimpSubscriber component', function () {
 
         describe('on failed with custom message', function () {
             beforeEach(function () {
-                $httpBackend.expectJSONP(endpoint).respond(200, {
+                var result = {
                     result: 'failed',
                     msg: 'message'
-                });
+                };
                 $ctrl.submit();
-                $httpBackend.flush();
+                subscriber.subscribe.calls.mostRecent().args[0].onSuccess(result);
             });
 
             it('is not subscribed', function () {
@@ -153,9 +227,8 @@ describe('mailChimpSubscriber component', function () {
 
         describe('on error', function () {
             beforeEach(function () {
-                $httpBackend.expectJSONP(endpoint).respond(400);
                 $ctrl.submit();
-                $httpBackend.flush();
+                subscriber.subscribe.calls.mostRecent().args[0].onError();
             });
 
             it('is not subscribed', function () {
